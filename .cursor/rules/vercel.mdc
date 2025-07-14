@@ -1,0 +1,113 @@
+---
+description: "Rules for Vercel best practices"
+globs: "*.{js,jsx,ts,tsx,vue,svelte}"
+alwaysApply: false
+---
+<rule>
+  <meta>
+    <title>Vercel Best Practices</title>
+    <description>A rule to enforce Vercel best practices for code organization, performance, security, and more.</description>
+    <created-at utc-timestamp="1744326000">April 11, 2025, 11:00 AM AEST</created-at>
+    <last-updated-at utc-timestamp="1744326000">April 11, 2025, 11:00 AM AEST</last-updated-at>
+    <applies-to>
+      <file-matcher glob="*.*">All project files</file-matcher>
+      <action-matcher action="code-commit">Triggered when committing code changes</action-matcher>
+    </applies-to>
+  </meta>
+  <requirements>
+    <requirement priority="high">
+      <description>Adhere to Vercels Style Guide: Utilize linting and styling tools configured according to the Vercel Style Guide for consistent code formatting and style.</description>
+    </requirement>
+    <requirement priority="high">
+      <description>Enforce Consistent Coding Style: Integrate ESLint, Prettier, and TypeScript to automatically enforce coding style and prevent stylistic inconsistencies.</description>
+    </requirement>
+    <requirement priority="high">
+      <description>Optimize Codebase Performance: Focus on optimizing the codebase for faster loading times and improved user experience. Includes optimizing cache, assets, and serverless functions.</description>
+    </requirement>
+    <requirement priority="high">
+      <description>Implement Conformance Checks: Utilize Vercels Conformance tools to automatically check for performance, security, and code health issues.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Adopt a clear and consistent directory structure (e.g., `components`, `pages`, `lib`, `api`, `styles`, `public`).</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Use descriptive and consistent file names (e.g., `Button.tsx`, `useUser.ts`).</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Organize code into reusable modules or components with well-defined interfaces.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Employ a component-based architecture to build reusable UI elements.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Implement code splitting to reduce the initial bundle size and improve loading times.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use serverless functions for API endpoints and background tasks, and edge functions to reduce latency.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use Incremental Static Regeneration (ISR) to combine the benefits of static generation and server-side rendering.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Avoid anti-patterns like large components, deep nesting, and over-fetching data.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Choose an appropriate state management solution and follow best practices.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Implement comprehensive error handling throughout the application.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Minimize bundle size, compress assets, use a CDN, and optimize database queries.</description>
+    </requirement>
+     <requirement priority="medium">
+        <description>Avoid memory leaks and profile memory usage.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use memoization and virtualization to optimize rendering performance.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Analyze and optimize bundle size using tools like `webpack-bundle-analyzer`.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Implement lazy loading for images, components, and routes.</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Prevent common vulnerabilities like XSS, CSRF, and SQL injection by sanitizing inputs and using secure patterns.</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Validate all user input on both the client and server sides.</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Implement strong authentication and authorization mechanisms (e.g., OAuth 2.0, JWT, RBAC).</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Encrypt sensitive data at rest and in transit, and use HTTPS for all communication.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Write unit tests for individual components and functions.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Write integration tests to verify that different parts of the application work together correctly.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Write end-to-end tests to simulate user interactions.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Organize tests logically and use mocking/stubbing to isolate components.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use recommended development tools like VS Code with appropriate extensions and the Vercel CLI.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use ESLint and Prettier to enforce consistent code style according to the Vercel Style Guide.</description>
+    </requirement>
+     <requirement priority="high">
+        <description>Integrate with a CI/CD pipeline to automate the build, test, and deployment process.</description>
+    </requirement>
+  </requirements>
+  <references>
+    <reference as="dependency" href=".cursor/rules/rules.mdc" reason="Follows standard rule format">Base rule format definition</reference>
+    <reference as="context" href="./vercel_style_guide.mdc" reason="Provides Vercel-specific style guidelines.">Vercel Style Guide</reference>
+  </references>
+</rule>

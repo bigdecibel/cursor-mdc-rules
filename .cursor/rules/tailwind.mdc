@@ -1,0 +1,98 @@
+---
+description: "Rules for Tailwind CSS best practices"
+globs: "*.{html,js,jsx,ts,tsx,vue,svelte}"
+alwaysApply: false
+---
+
+<rule>
+  <meta>
+    <title>Tailwind CSS Best Practices</title>
+    <description>A rule to enforce best practices for using Tailwind CSS.</description>
+    <created-at utc-timestamp="1744326000">April 11, 2025, 11:00 AM AEST</created-at>
+    <last-updated-at utc-timestamp="1744326000">April 11, 2025, 11:00 AM AEST</last-updated-at>
+    <applies-to>
+      <file-matcher glob="*.{html,js,jsx,ts,tsx,vue,svelte}">All relevant frontend files</file-matcher>
+      <action-matcher action="code-commit">Triggered when committing code changes</action-matcher>
+    </applies-to>
+  </meta>
+  <requirements>
+    <requirement priority="high">
+      <description>Embrace the utility-first workflow. Compose complex components by applying utility classes directly in your HTML.</description>
+      <examples>
+        <example title="Utility-First Approach">
+          <correct-example title="Composing a button with utilities" correctness-criteria="Uses utility classes directly for styling."><![CDATA[<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+  Button
+</button>]]></correct-example>
+          <incorrect-example title="Using a custom CSS class" incorrectness-criteria="Creates a custom class instead of using utilities."><![CDATA[<button class="btn-primary">
+  Button
+</button>
+
+<style>
+.btn-primary {
+  background-color: #3b82f6;
+  color: #ffffff;
+  /* ... and so on ... */
+}
+</style>]]></incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+    <requirement priority="medium">
+      <description>When you need to reuse a set of styles, extract components, not CSS classes. Use templating partials, loops, or JavaScript/framework components.</description>
+    </requirement>
+    <requirement priority="medium">
+      <description>Use `@apply` sparingly. It should only be used for small, highly reusable components like buttons or form controls if component extraction is not feasible.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Customize your theme in `tailwind.config.js` instead of writing custom CSS. Add your own colors, spacing, fonts, and breakpoints.</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Ensure your production builds are purged of unused CSS to keep file sizes small. Configure the `content` (formerly `purge`) option in your `tailwind.config.js`.</description>
+    </requirement>
+    <requirement priority="low">
+        <description>Keep class lists organized and consistent. A recommended order is: Layout (display, position, visibility) -> Box Model (width, height, margin, padding) -> Typography (font, text) -> Backgrounds -> Borders -> Effects (shadows) -> Transitions.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use Tailwinds responsive design features (e.g., `md:`, `lg:`) to build adaptive user interfaces.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Adopt a mobile-first approach by designing for smaller screens first and then using responsive modifiers for larger screens.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Utilize component libraries like Tailwind UI or create your own reusable components to accelerate development.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Optimize performance by minimizing the number of utility classes, using `@apply` judiciously, and enabling JIT mode.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Keep your UI organized by breaking it down into smaller, reusable components with consistent naming conventions.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Integrate with a design system by mapping design tokens to your Tailwind configuration for a consistent brand identity.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Use semantic class names in conjunction with `@apply` for improved readability and maintainability.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Create custom utilities in your `tailwind.config.js` for frequently used CSS patterns.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Leverage the `theme()` function to access your themes design tokens in CSS or JavaScript.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Avoid inline styles in favor of Tailwinds utility classes.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Use `@layer` directives to organize your custom styles and avoid conflicts with Tailwinds base styles.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Use arbitrary values with square bracket notation sparingly to maintain readability.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Utilize variants like `hover:`, `focus:`, and `active:` to create interactive styles.</description>
+    </requirement>
+  </requirements>
+  <references>
+    <reference as="dependency" href=".cursor/rules/rules.mdc" reason="Follows standard rule format">Base rule format definition</reference>
+  </references>
+</rule>

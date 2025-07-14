@@ -1,0 +1,53 @@
+---
+description: "Rules for Next.js best practices"
+globs: "*.{js,jsx,ts,tsx}"
+alwaysApply: false
+---
+
+<rule>
+  <meta>
+    <title>Next.js Best Practices</title>
+    <description>A rule to enforce best practices for developing Next.js applications, focusing on code organization, performance, and security.</description>
+    <created-at utc-timestamp="1744326000">April 11, 2025, 11:00 AM AEST</created-at>
+    <last-updated-at utc-timestamp="1744326000">April 11, 2025, 11:00 AM AEST</last-updated-at>
+    <applies-to>
+      <file-matcher glob="*.{js,jsx,ts,tsx}">All relevant Next.js files</file-matcher>
+      <action-matcher action="code-commit">Triggered when committing code changes</action-matcher>
+    </applies-to>
+  </meta>
+  <requirements>
+    <requirement priority="high">
+        <description>Use the `app/` directory for new projects to leverage the latest Next.js features like server components and nested layouts.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Separate components into presentational (UI) and container (data fetching, state) components, and use Server Components by default to improve performance.</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Use `next/image` for automatic image optimization and `next/font` for font optimization to improve loading performance and prevent layout shift.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use `getStaticProps` for static data, `getServerSideProps` for server-rendered data, and client-side fetching libraries like SWR or React Query for dynamic data.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>Use a consistent styling solution like CSS Modules or Tailwind CSS. Avoid global stylesheets for component-level styles.</description>
+    </requirement>
+    <requirement priority="critical">
+        <description>Prevent security vulnerabilities by validating user input, sanitizing data to prevent XSS, and never exposing API keys or other secrets on the client-side. Store secrets in environment variables.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Implement comprehensive testing, including unit tests with Jest and React Testing Library, and end-to-end tests with Cypress or Playwright.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Use dynamic imports (`next/dynamic`) for components that are not critical for the initial page load to reduce bundle size.</description>
+    </requirement>
+    <requirement priority="medium">
+        <description>For state management, prefer React Context for simple cases and Zustand or Jotai for more complex scenarios over Redux, which can be overkill.</description>
+    </requirement>
+    <requirement priority="high">
+        <description>Implement proper error handling using Error Boundary components and custom error pages (`_error.js` or `error.tsx` in the app directory).</description>
+    </requirement>
+  </requirements>
+  <references>
+    <reference as="dependency" href=".cursor/rules/rules.mdc" reason="Follows standard rule format">Base rule format definition</reference>
+  </references>
+</rule>
