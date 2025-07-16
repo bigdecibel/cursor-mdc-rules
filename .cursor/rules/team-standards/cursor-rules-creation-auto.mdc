@@ -1,13 +1,17 @@
 ---
 description: Rules for writing .mdc files (Cursor rules)
 globs: "*.mdc"
-alwaysApply: true
+alwaysApply: false
 ---
+
+<!-- CRITICAL WARNING: YAML FRONTMATTER MUST ALWAYS BE AT THE TOP OF .mdc FILES -->
+<!-- NEVER PLACE YAML FRONTMATTER AT THE BOTTOM - THIS CREATES MALFORMED DOCUMENTS -->
+<!-- ALWAYS START WITH: --- (description/globs/alwaysApply) --- THEN <rule> content -->
 
 <rule>
   <meta>
     <title>Cursor Rule File Format (.mdc)</title>
-    <description>Standard format and requirements for writing .mdc files (Cursor rules)</description>
+    <description>CRITICAL: Standard format for .mdc files - YAML frontmatter MUST be at the top, never at the bottom</description>
     <created-at utc-timestamp="1744157700">April 9, 2025, 10:15 AM AEST</created-at>
     <last-updated-at utc-timestamp="1744240920">April 10, 2025, 09:22 AM AEST</last-updated-at>
     <applies-to>
@@ -16,6 +20,43 @@ alwaysApply: true
     </applies-to>
   </meta>
   <requirements>
+    <non-negotiable priority="critical">
+      <description>CRITICAL FILE STRUCTURE: Always place YAML frontmatter at the very top of .mdc files. NEVER place YAML at the bottom. Start with ---, then description/globs/alwaysApply fields, then ---, then XML rule content. Malformed documents result from incorrect YAML placement.</description>
+      <examples>
+        <example title="CRITICAL YAML Placement">
+          <correct-example title="YAML at top - CORRECT structure" conditions="Creating any .mdc file" expected-result="Valid .mdc file with proper structure" correctness-criteria="YAML frontmatter at top, followed immediately by XML rule content"><![CDATA[---
+description: Example rule description
+globs: "*.py"
+alwaysApply: false
+---
+
+<rule>
+  <meta>
+    <title>Example Rule Title</title>
+    <description>Rule content goes here</description>
+  </meta>
+  <requirements>
+    <!-- Rule requirements -->
+  </requirements>
+</rule>]]></correct-example>
+          <incorrect-example title="YAML at bottom - CREATES MALFORMED DOCUMENT" conditions="Creating any .mdc file" expected-result="Valid .mdc file structure" incorrectness-criteria="YAML frontmatter placed at bottom creates invalid/malformed document structure"><![CDATA[<rule>
+  <meta>
+    <title>Example Rule Title</title>
+    <description>Rule content goes here</description>
+  </meta>
+  <requirements>
+    <!-- Rule requirements -->
+  </requirements>
+</rule>
+
+---
+description: Example rule description
+globs: "*.py"
+alwaysApply: false
+---]]></incorrect-example>
+        </example>
+      </examples>
+    </non-negotiable>
     <requirement priority="critical">
       <description>Follow the specified structure for .mdc files, starting with YAML frontmatter followed by XML-like rule representation.</description>
       <examples>
@@ -371,8 +412,15 @@ alwaysApply: {true or false}
     </schema>
   </grammar>
   <context description="Additional considerations for creating Cursor rules">
+    CRITICAL WARNING: The most common error when creating .mdc files is placing YAML frontmatter at the bottom instead of the top. This creates malformed documents that cannot be parsed correctly.
+    
+    MANDATORY FILE STRUCTURE:
+    1. YAML frontmatter MUST be at the very top (lines 1-5)
+    2. XML rule content follows immediately after
+    3. NEVER place YAML anywhere else in the file
+    
     The primary purpose of a Cursor rule (.mdc file) is to provide clear, unambiguous guidance that can be consistently applied. The rule acts essentially as a prompt or part of a prompt for an LLM, so clarity and precision are paramount. When creating rules, focus on solving only the specific problem the rule is intended to address, avoiding scope creep or assumptions based on common knowledge unless explicitly requested.
     
-    For automated generation of .mdc files, strict adherence to YAML frontmatter placement is critical. The file must begin with YAML frontmatter at the very top, followed immediately by the XML rule block. Any automation tools or scripts must validate that no duplicate YAML blocks exist at the end of the file, as this causes parsing issues and invalidates the rule structure.
+    For automated generation of .mdc files, strict adherence to YAML frontmatter placement is absolutely critical. The file MUST begin with YAML frontmatter at the very top, followed immediately by the XML rule block. Any automation tools or scripts must validate that no duplicate YAML blocks exist at the end of the file, as this causes parsing issues and invalidates the rule structure. Always validate: first line = ---, then required YAML fields, then ---, then XML content only.
   </context>
 </rule>

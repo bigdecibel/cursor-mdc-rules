@@ -79,6 +79,35 @@ git merge main]]></incorrect-example>
     <requirement priority="high">
         <description>Integrate Git with a CI/CD system to automate testing and deployment.</description>
     </requirement>
+
+   <requirement priority="critical">
+      <description>Use conventional commit format with ticket numbers</description>
+      <examples>
+        <example title="Commit Message Format">
+          <correct-example>feat(auth): implement JWT token validation [PROJ-123]
+- Add JWT middleware to Phoenix router
+- Create React hook for token management
+- Add Python token validation service
+- Include comprehensive test coverage</correct-example>
+          <incorrect-example>fix stuff
+
+quick commit to fix broken functionality</incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+    <requirement priority="high">
+      <description>Follow branch naming conventions with project prefixes</description>
+      <examples>
+        <example title="Branch Naming">
+          <correct-example>feature/PROJ-123-add-user-authentication
+fix/PROJ-124-fix-login-redirect
+hotfix/PROJ-125-security-patch</correct-example>
+          <incorrect-example>my-feature-branch
+fix
+temp-branch</incorrect-example>
+        </example>
+      </examples>
+    </requirement>
   </requirements>
   <references>
     <reference as="dependency" href=".cursor/rules/rules.mdc" reason="Follows standard rule format">Base rule format definition</reference>
