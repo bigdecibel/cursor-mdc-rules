@@ -1,6 +1,6 @@
 ---
 description: "Rules for PostgreSQL best practices"
-globs: "*.sql"
+globs: ["*.sql"]
 alwaysApply: false
 ---
 

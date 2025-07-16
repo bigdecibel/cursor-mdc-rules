@@ -1,6 +1,6 @@
 ---
 description: "Comprehensive SQLAlchemy best practices with Python type hints, ORM patterns, and performance optimization"
-globs: "*.py"
+globs: ["*.py"]
 alwaysApply: false
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: "Security-specific rules for PostgreSQL"
-globs: "*.sql"
+globs: ["*.sql"]
 alwaysApply: false
 ---
 

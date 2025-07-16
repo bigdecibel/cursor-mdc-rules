@@ -1,6 +1,6 @@
 ---
 description: "Rules for SQLite best practices with TypeScript"
-globs: "*.{ts,tsx,sql}"
+globs: ["*.{ts,tsx,sql}"]
 alwaysApply: false
 ---
 <rule>

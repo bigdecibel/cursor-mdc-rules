@@ -1,6 +1,6 @@
 ---
 description: "Comprehensive Alembic best practices for database migrations following community standards and PEP guidelines"
-globs: "*.py"
+globs: ["*.py"]
 alwaysApply: false
 ---
 

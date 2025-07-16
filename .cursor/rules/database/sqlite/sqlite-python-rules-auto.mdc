@@ -1,6 +1,6 @@
 ---
 description: "Rules for SQLite best practices with Python, SQLAlchemy, and Alembic"
-globs: "*.py"
+globs: ["*.py"]
 alwaysApply: false
 ---
 <rule>

@@ -1,6 +1,6 @@
 ---
 description: Project development guidelines and AI assistant behavior
-globs: "*"
+globs: ["*"]
 alwaysApply: true
 ---
 <rule>

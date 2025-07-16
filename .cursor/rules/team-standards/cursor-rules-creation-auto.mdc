@@ -1,6 +1,6 @@
 ---
 description: Rules for writing .mdc files (Cursor rules)
-globs: "*.mdc"
+globs: ["*.mdc"]
 alwaysApply: false
 ---
 

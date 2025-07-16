@@ -1,6 +1,6 @@
 ---
 description: Code review standards for the team.
-globs: 
+globs: ["**/*"]
 alwaysApply: true
 ---
 
