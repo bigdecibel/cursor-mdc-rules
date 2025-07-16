@@ -1,7 +1,7 @@
 ---
-description: "Rules for Git best practices"
-globs: ["*"]
-alwaysApply: true
+description: ""
+globs: [".git/**/*", "*.git*", "**/.gitignore", "**/.gitattributes", "**/git-*", "**/*git*"]
+alwaysApply: false
 ---
 
 <rule>

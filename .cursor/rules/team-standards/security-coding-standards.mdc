@@ -1,7 +1,7 @@
 ---
-description: Comprehensive security coding standards covering SAST, DAST, security by design, password management, access control, error handling, cryptographic practices, and input validation with best practices for Python, TypeScript, and Elixir
+description: ""
 globs: ["*.{py,ts,tsx,js,jsx,ex,exs,eex,heex,leex,json,yaml,yml,md}"]
-alwaysApply: true
+alwaysApply: false
 ---
 
 <rule>
