@@ -1,6 +1,6 @@
 # Cursor MDC Rules - Enterprise-Grade Rule System
 
-*Last updated: January 2025 - Major content improvements & YAML format fixes*
+*Last updated: January 2025 - Major content improvements, PostgreSQL comprehensive rewrite & YAML format fixes*
 
 A comprehensive, performance-optimized collection of Cursor MDC rules following expert best practices for modern development workflows. This repository provides enterprise-level rule organization with 96% reduction in token usage and expert-recommended structure.
 
@@ -37,7 +37,7 @@ Fixed **6 files** with malformed YAML frontmatter that had incorrect placement a
 **Impact**: These fixes ensure proper Cursor MDC rule activation and compliance with cursor-rules-creation standards.
 
 ### Major Content Improvements - Eliminated Placeholder Files
-Completely rewrote **3 major placeholder files** from 82-line generic templates to comprehensive, production-ready standards:
+Completely rewrote **4 major placeholder files** from basic templates to comprehensive, production-ready standards:
 
 #### 1. **MobX State Management (505-mobx-core-standards-auto.mdc)**
 - **Expanded**: 82 lines → 200+ comprehensive lines
@@ -63,10 +63,22 @@ Completely rewrote **3 major placeholder files** from 82-line generic templates 
 - **Testing**: Comprehensive coverage for state transitions, guards, actions, services, edge cases
 - **Production**: Performance optimization and error handling strategies
 
+#### 4. **PostgreSQL Core Standards (506-postgresql-core-standards-auto.mdc)**
+- **Completely Rewritten**: From 81 basic lines → **815 comprehensive lines**
+- **Security Standards**: CIS security guidelines, SCRAM-SHA-256 authentication, SSL/TLS encryption
+- **Modern Features**: PostgreSQL 16+ features including partitioning, JSONB optimization, parallel processing
+- **Performance**: Strategic indexing (B-tree, GIN, BRIN), query optimization, monitoring with pg_stat_io
+- **Schema Design**: UUID primary keys, proper constraints, generated columns, materialized views
+- **Security**: SQL injection prevention, password hashing standards, role-based access control
+- **Monitoring**: pg_stat_statements, comprehensive logging, automated VACUUM/ANALYZE
+- **Backup & Recovery**: WAL archiving, point-in-time recovery, testing procedures
+- **Consolidated**: Merged separate security rules file into comprehensive resource
+
 ### Additional Format & Quality Fixes
 - **Fixed empty description** in `202-git-workflow.mdc` for proper YAML frontmatter compliance
 - **Corrected malformed globs array** in `502-prisma-typescript-rules-auto.mdc` for proper pattern matching
 - **Standardized YAML format** consistency across all rule files
+- **Consolidated PostgreSQL rules**: Removed separate security file, integrated into comprehensive standard
 
 ### Quality Standards Applied
 Each rewritten file now includes:
@@ -78,7 +90,7 @@ Each rewritten file now includes:
 - **Production deployment** patterns following expert community standards
 
 ### Remaining Improvement Opportunities
-Identified **11+ placeholder files** still requiring comprehensive content updates:
+Identified **10+ placeholder files** still requiring comprehensive content updates:
 - File manipulation utilities (file-saver, hotkeys-js, jszip)
 - Data processing libraries (lodash, slashes, uuid, csv2json, fast-csv)
 - Additional testing and development tools
@@ -120,15 +132,15 @@ The new numbered system provides clear precedence and logical organization:
 │   ├── 402-next.js-core-standards-auto.mdc
 │   ├── 403-tailwind-core-standards-auto.mdc
 │   └── 414-bandit-core-standards-auto.mdc
-├── 500-architecture/            # Database & architecture (20 files)
+├── 500-architecture/            # Database & architecture (19 files)
 │   ├── 501-postgresql.mdc
-│   ├── 502-postgresql_security_rules.mdc
 │   ├── 503-prisma-typescript-rules-auto.mdc
 │   ├── 504-sqlite-python-rules-auto.mdc
 │   ├── 505-mobx-core-standards-auto.mdc
-│   ├── 506-sqlite-typescript-rules-auto.mdc
-│   ├── 507-sqlalchemy-python-rules-auto.mdc
-│   ├── 508-alembic-python-rules-auto.mdc
+│   ├── 506-postgresql-core-standards-auto.mdc
+│   ├── 507-sqlite-typescript-rules-auto.mdc
+│   ├── 508-sqlalchemy-python-rules-auto.mdc
+│   ├── 509-alembic-python-rules-auto.mdc
 │   ├── 510-xstate-core-standards-auto.mdc
 │   ├── 513-telemetry-metrics-core-standards-auto.mdc
 │   ├── 514-telemetry-poller-core-standards-auto.mdc
@@ -206,6 +218,44 @@ The new Elixir rules provide:
 - **Performance Optimization**: Advanced caching, connection pooling, and efficiency patterns
 - **Observability Integration**: Comprehensive telemetry, metrics, and monitoring setup
 - **Security Best Practices**: Authentication, token management, and secure communication patterns
+
+## 🗄️ Database & ORM Coverage
+
+### Comprehensive PostgreSQL Standards (506-postgresql-core-standards-auto.mdc)
+
+The completely rewritten PostgreSQL rule provides enterprise-grade database development standards:
+
+**Security Standards (CIS Guidelines):**
+- **Authentication**: SCRAM-SHA-256 with SSL/TLS encryption enforcement
+- **Access Control**: Role-based permissions with least privilege principles
+- **Data Protection**: Secure password hashing, SQL injection prevention
+- **Audit Logging**: Comprehensive connection and query monitoring
+
+**Performance & Optimization:**
+- **Modern Indexing**: Strategic use of B-tree, GIN, BRIN, and partial indexes  
+- **Query Optimization**: Window functions, CTEs, parallel processing, EXPLAIN ANALYZE
+- **Schema Design**: UUID primary keys, proper constraints, generated columns
+- **Monitoring**: pg_stat_statements, pg_stat_io, automated maintenance
+
+**PostgreSQL 16+ Features:**
+- **Partitioning**: Range partitioning for large time-series data
+- **JSONB Optimization**: Binary JSON for high-performance queries
+- **Parallel Processing**: Multi-core query execution
+- **Enhanced Monitoring**: Advanced I/O statistics and performance tracking
+
+**Operational Excellence:**
+- **Backup & Recovery**: WAL archiving, point-in-time recovery, tested procedures
+- **Maintenance**: Automated VACUUM/ANALYZE with optimal configuration
+- **Growth Monitoring**: Database size tracking, index usage analysis
+
+### Database Benefits
+
+The comprehensive PostgreSQL standards provide:
+- **Security-First Design**: CIS security benchmark compliance with modern authentication
+- **Enterprise Performance**: Strategic indexing and query optimization for large-scale applications
+- **Modern Features**: Full PostgreSQL 16+ feature utilization with best practices
+- **Production-Ready**: Complete monitoring, backup, and maintenance procedures
+- **Developer-Friendly**: Clear examples and anti-patterns for all common scenarios
 
 ## 🏗️ Infrastructure & Platform Coverage
 
@@ -464,7 +514,7 @@ Ensure compliance with:
 - sqlalchemy-python-rules-auto: Modern SQLAlchemy 2.0 patterns, type hints, model structure
 - alembic-python-rules-auto: Migration best practices, rollback support, proper naming
 - python-core-standards-auto: PEP compliance, type hints, proper imports
-- postgresql: Database-specific optimizations and constraints
+- postgresql-core-standards-auto: Comprehensive PostgreSQL security, performance, and schema design best practices
 
 Generate:
 1. User model class with all fields and relationships
