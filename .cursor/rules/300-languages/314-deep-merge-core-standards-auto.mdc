@@ -1,3 +1,13 @@
+---
+description: "Comprehensive DeepMerge utility standards for Elixir with recursive merging, conflict resolution, custom merge strategies, and performance optimization following functional programming best practices"
+globs:
+  - "*.{ex,exs}"
+  - "**/*merge*"
+  - "**/*config*"
+  - "**/*transform*"
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>DeepMerge Core Standards</title>
@@ -1128,7 +1138,3 @@ end]]></incorrect-example>
     <reference as="context" href="https://github.com/stevenschobert/deep_merge" reason="DeepMerge source code and examples">DeepMerge GitHub Repository</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----

@@ -1,3 +1,9 @@
+---
+description: "Comprehensive TelemetryMetrics standards for Elixir observability with metrics collection, aggregation, reporting, and monitoring integration following modern observability best practices"
+globs: ["*.{ex,exs}", "**/telemetry/**/*", "**/metrics/**/*", "**/monitoring/**/*"]
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>TelemetryMetrics Core Standards</title>
@@ -1381,7 +1387,4 @@ end]]></incorrect-example>
     <reference as="context" href="https://hexdocs.pm/telemetry/" reason="Telemetry library documentation">Telemetry Library Documentation</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----
+ 

@@ -1,6 +1,10 @@
 ---
-description: "Rules for Prisma ORM best practices"
-globs: ["*.ts,*.js,*.prisma"]
+description: "Comprehensive Prisma ORM best practices with TypeScript integration, security, performance optimization, and testing following modern database development standards"
+globs:
+  - "**/*.{ts,js,prisma}"
+  - "**/prisma/**/*"
+  - "**/*prisma*"
+  - "**/migrations/**/*"
 alwaysApply: false
 ---
 

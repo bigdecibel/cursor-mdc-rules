@@ -1,3 +1,13 @@
+---
+description: "Comprehensive Gettext internationalization and localization standards for Elixir with message extraction, pluralization, context handling, and translation management following i18n best practices"
+globs:
+  - "*.{ex,exs,eex,heex,leex}"
+  - "**/priv/gettext/**/*"
+  - "**/locale/**/*"
+  - "**/*i18n*"
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>Gettext Core Standards</title>
@@ -1190,7 +1200,3 @@ end]]></incorrect-example>
     <reference as="context" href="https://hexdocs.pm/phoenix/Phoenix.HTML.html" reason="Phoenix HTML helpers">Phoenix HTML Integration</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----

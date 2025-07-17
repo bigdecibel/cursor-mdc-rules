@@ -1,3 +1,12 @@
+---
+description: "Comprehensive Jason JSON library standards for Elixir with encoding, decoding, performance optimization, error handling, and custom encoders following community best practices"
+globs:
+  - "*.{ex,exs}"
+  - "**/config/**/*"
+  - "**/*json*"
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>Jason Core Standards</title>
@@ -1030,7 +1039,3 @@ end]]></incorrect-example>
     <reference as="context" href="https://github.com/michalmuskala/jason" reason="Jason source code and examples">Jason GitHub Repository</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----

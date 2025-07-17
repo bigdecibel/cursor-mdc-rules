@@ -1,6 +1,12 @@
 ---
-description: ""
-globs: [".git/**/*", "*.git*", "**/.gitignore", "**/.gitattributes", "**/git-*", "**/*git*"]
+description: "Git workflow best practices including commit message conventions, branch management, and collaboration standards following industry best practices"
+globs: 
+  - ".git/**/*"
+  - "*.git*"
+  - "**/.gitignore"
+  - "**/.gitattributes"
+  - "**/git-*"
+  - "**/*git*"
 alwaysApply: false
 ---
 

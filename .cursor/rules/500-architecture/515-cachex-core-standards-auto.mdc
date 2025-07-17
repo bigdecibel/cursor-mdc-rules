@@ -1,3 +1,9 @@
+---
+description: "Comprehensive Cachex caching standards for Elixir with cache management, performance optimization, expiration policies, and distributed caching following modern caching best practices"
+globs: ["*.{ex,exs}", "**/cache/**/*", "**/cachex/**/*", "**/*cache*"]
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>Cachex Core Standards</title>
@@ -1074,7 +1080,4 @@ defmodule MyApp.Cache.Janitor do
     end
   end
 end
-description:
-globs:
-alwaysApply: false
----
+ 

@@ -1,3 +1,9 @@
+---
+description: "Comprehensive TelemetryPoller standards for Elixir with periodic measurements, system monitoring, custom pollers, and performance optimization following observability best practices"
+globs: ["*.{ex,exs}", "**/telemetry/**/*", "**/poller/**/*", "**/monitoring/**/*"]
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>TelemetryPoller Core Standards</title>
@@ -1526,7 +1532,4 @@ end]]></incorrect-example>
     <reference as="context" href="https://hexdocs.pm/telemetry/" reason="Telemetry library documentation">Telemetry Library Documentation</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----
+ 

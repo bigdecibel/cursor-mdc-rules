@@ -1,3 +1,9 @@
+---
+description: "Comprehensive Goth Google authentication standards for Elixir with OAuth2, service accounts, token management, and security best practices following Google Cloud authentication standards"
+globs: ["*.{ex,exs}", "**/goth/**/*", "**/auth/**/*", "**/google/**/*", "**/*auth*"]
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>Goth Core Standards</title>
@@ -1574,7 +1580,4 @@ end]]></incorrect-example>
     <reference as="context" href="https://github.com/peburrows/goth" reason="Goth source code and examples">Goth GitHub Repository</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----
+ 

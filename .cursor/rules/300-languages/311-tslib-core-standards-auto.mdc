@@ -1,3 +1,13 @@
+---
+description: "Comprehensive tslib TypeScript runtime library standards for helper functions, import optimization, polyfill management, and build configuration following TypeScript community standards"
+globs:
+  - "**/*.{ts,tsx,js,jsx}"
+  - "**/tsconfig.json"
+  - "**/package.json"
+  - "**/webpack.config.*"
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>TSLib Core Standards</title>
@@ -1153,7 +1163,3 @@ class BadService {
     <reference as="context" href="https://www.typescriptlang.org/docs/handbook/compiler-options.html#importhelpers" reason="TypeScript compiler options">TypeScript importHelpers Option</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----

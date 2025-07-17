@@ -1,3 +1,9 @@
+---
+description: "Comprehensive GraphQL standards for schema design, query optimization, security best practices, and TypeScript integration following expert community standards"
+globs: ["**/*.{ts,tsx,js,jsx,graphql,gql}", "**/schema/**/*", "**/resolvers/**/*", "**/types/**/*"]
+alwaysApply: false
+---
+
 <rule>
   <meta>
     <title>GraphQL Core Standards</title>
@@ -1070,7 +1076,4 @@ describe('GraphQL Tests', () => {
     <reference as="context" href="https://www.apollographql.com/docs/apollo-server/security/authentication/" reason="Apollo Server security">GraphQL Security Patterns</reference>
   </references>
 </rule>
-description:
-globs:
-alwaysApply: false
----
+ 
