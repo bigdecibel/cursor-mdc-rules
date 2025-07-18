@@ -153,7 +153,7 @@ The new numbered system provides clear precedence and logical organization:
 │   ├── 521-zookeeper-core-standards-auto.mdc
 │   ├── 522-ory-core-standards-auto.mdc
 │   └── 523-kratos-core-standards-auto.mdc
-└── 600-tooling/                 # Build tools & utilities (24 files)
+└── 600-tooling/                 # Build tools & utilities (25 files)
     ├── 601-npm-core-standards-auto.mdc
     ├── 602-yarn-core-standards-auto.mdc
     ├── 603-npx-core-standards-auto.mdc
@@ -177,7 +177,8 @@ The new numbered system provides clear precedence and logical organization:
     ├── 621-date-fns-core-standards-auto.mdc
     ├── 634-req-core-standards-auto.mdc
     ├── 635-kafka-ui-core-standards-auto.mdc
-    └── 636-langgraph-core-standards-auto.mdc
+    ├── 636-langgraph-core-standards-auto.mdc
+    └── 637-deno-core-standards-auto.mdc
 ```
 
 ## 🎯 New Elixir Ecosystem Coverage
@@ -279,6 +280,7 @@ The comprehensive PostgreSQL standards provide:
 **Management & AI Tools (600-tooling/):**
 - **Kafka UI (635)** - Kafka cluster management with monitoring dashboards, security configuration, RBAC, and operational efficiency
 - **LangGraph (636)** - AI agent development with graph-based reasoning, state management, tool integration, safety measures, and production monitoring
+- **Deno (637)** - Modern JavaScript/TypeScript runtime with security-first development, built-in toolchain, and web standards compliance
 
 ### Infrastructure Benefits
 
@@ -289,6 +291,58 @@ The comprehensive infrastructure rules provide:
 - **Enterprise Scale**: High availability, monitoring, alerting, and production-ready configurations
 - **AI Integration**: Modern AI agent development with safety, monitoring, and cost optimization
 - **Operational Excellence**: Management interfaces, monitoring dashboards, and operational efficiency
+
+## 🦕 Modern Runtime Development
+
+### Comprehensive Deno Standards (637-deno-core-standards-auto.mdc)
+
+The new Deno rule provides expert-level standards for modern JavaScript and TypeScript development with Deno 2.0+:
+
+**Security-First Development:**
+- **Explicit Permission Model**: Always use minimal, specific permissions (`--allow-net=:8000` instead of `--allow-all`)
+- **Permission Validation**: Programmatic permission checking before accessing resources
+- **Zero-Trust Architecture**: Secure by default with explicit capability grants
+- **Runtime Security**: Built-in protection against unauthorized file system, network, and environment access
+
+**TypeScript-First Patterns:**
+- **Built-in TypeScript Support**: No transpilation required, native TS execution
+- **Modern Type Safety**: Strict typing with latest TypeScript features and compiler options
+- **Web Standards Typing**: Full type support for web APIs (fetch, Response, Request, WebStreams)
+- **Zero Configuration**: TypeScript works out of the box without setup
+
+**Built-in Toolchain Excellence:**
+- **Unified Tooling**: deno fmt, deno lint, deno test, deno compile - no npm dependencies needed
+- **Performance Optimization**: Native tools optimized for Deno runtime
+- **Consistent Standards**: Unified code style and quality across all tools
+- **Built-in Testing**: Comprehensive test framework with benchmarks and coverage
+
+**Web Standards Compliance:**
+- **Fetch API**: Modern HTTP client using web standard fetch instead of libraries
+- **Web Streams**: ReadableStream, WritableStream for streaming data
+- **URL API**: Native URL parsing and manipulation
+- **Response/Request**: Standard web APIs for HTTP handling
+
+**Modern Dependency Management:**
+- **JSR-First Strategy**: Use JavaScript Registry for TypeScript-native packages
+- **URL Imports**: Direct module imports from URLs for transparency
+- **Centralized Dependencies**: deps.ts file for clean dependency organization
+- **Version Control**: Explicit version pinning and dependency management
+
+**Production Deployment:**
+- **Standalone Compilation**: Single binary output with deno compile
+- **Container Optimization**: Multi-stage Docker builds with distroless images
+- **Cross-Platform**: Compile for Linux, Windows, macOS from any platform
+- **Performance**: V8 code caching and optimization for fast startup
+
+### Deno Development Benefits
+
+The comprehensive Deno standards provide:
+- **Security Excellence**: Permission-based security model prevents unauthorized access
+- **Developer Productivity**: Built-in toolchain eliminates configuration complexity
+- **Modern Standards**: Web API compatibility ensures future-proof development
+- **TypeScript Native**: First-class TypeScript support without build steps
+- **Production Ready**: Optimized deployment with standalone binaries and containers
+- **Performance Focused**: V8 optimizations and efficient runtime execution
 
 ## 🎯 Usage Instructions
 
@@ -586,7 +640,42 @@ Implement [API/SERVICE] using:
 - Pytest for testing
 - PostgreSQL database
 
-Following: python-core-standards-auto, sqlalchemy-python-rules-auto, alembic-python-rules-auto, postgresql
+Following: python-core-standards-auto, sqlalchemy-python-rules-auto, alembic-python-rules-auto, postgresql-core-standards-auto
+```
+
+#### For Modern Runtime Development
+```
+Build secure, high-performance applications using:
+- Deno 2.0+ runtime with TypeScript-first development
+- Built-in security with explicit permissions
+- Web standards APIs (fetch, Response, WebStreams)
+- JSR and npm package compatibility
+- Built-in testing, formatting, and linting
+- Single binary compilation for deployment
+
+Following: deno-core-standards-auto, typescript-core-standards-auto
+
+Requirements:
+- TypeScript HTTP API with type-safe request/response handling
+- Secure permission model with minimal required access
+- Built-in toolchain for formatting, linting, and testing
+- Production deployment with compiled binaries
+- Web standards compliance throughout
+
+Generate:
+1. Type-safe HTTP server using Deno.serve with proper routing
+2. Comprehensive test suite using Deno.test with integration tests
+3. Production Dockerfile with multi-stage builds and security
+4. deno.json configuration with tasks, imports, and compiler options
+5. Deployment automation with cross-platform compilation
+
+Include:
+- Security-first development with explicit permissions
+- Modern TypeScript patterns with strict type checking
+- Web standard APIs throughout (no Node.js dependencies)
+- Built-in toolchain usage (deno fmt, deno lint, deno test)
+- Production-ready deployment patterns with optimization
+- Comprehensive error handling and logging
 ```
 
 #### For Testing Workflows
