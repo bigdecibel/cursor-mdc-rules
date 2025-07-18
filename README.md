@@ -127,11 +127,12 @@ The new numbered system provides clear precedence and logical organization:
 │   ├── 312-jason-core-standards-auto.mdc
 │   ├── 313-gettext-core-standards-auto.mdc
 │   └── 314-deep-merge-core-standards-auto.mdc
-├── 400-frameworks/              # Framework rules (4 files)
+├── 400-frameworks/              # Framework rules (5 files)
 │   ├── 401-react-core-standards-auto.mdc
 │   ├── 402-next.js-core-standards-auto.mdc
 │   ├── 403-tailwind-core-standards-auto.mdc
-│   └── 414-bandit-core-standards-auto.mdc
+│   ├── 414-bandit-core-standards-auto.mdc
+│   └── 415-tanstack-table-core-standards-auto.mdc
 ├── 500-architecture/            # Database & architecture (19 files)
 │   ├── 501-postgresql.mdc
 │   ├── 503-prisma-typescript-rules-auto.mdc
@@ -190,8 +191,9 @@ The new numbered system provides clear precedence and logical organization:
 - **Gettext (313)** - Internationalization and localization with message extraction, pluralization, and context handling  
 - **DeepMerge (314)** - Advanced data structure merging with conflict resolution, custom strategies, and performance optimization
 
-**HTTP Server Framework (400-frameworks/):**
+**React & UI Frameworks (400-frameworks/):**
 - **Bandit (414)** - Modern HTTP server with HTTP/2 support, security configuration, performance monitoring, and production deployment patterns
+- **TanStack Table (415)** - Powerful headless table library with TypeScript integration, virtualization, advanced filtering/sorting, performance optimization, and comprehensive accessibility support
 
 **Architecture & Observability (500-architecture/):**
 - **TelemetryMetrics (513)** - Comprehensive observability with metrics collection, aggregation, SLA monitoring, and alerting integration

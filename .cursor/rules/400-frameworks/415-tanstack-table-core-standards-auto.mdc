@@ -1,0 +1,1772 @@
+---
+description: Comprehensive TanStack Table (@tanstack/react-table) standards with TypeScript integration, performance optimization, virtualization, and modern table patterns following expert community best practices
+globs: ["**/*.{ts,tsx,js,jsx}", "**/package.json"]
+alwaysApply: false
+---
+
+<rule>
+  <meta>
+    <title>TanStack Table Core Standards</title>
+    <description>Comprehensive TanStack Table (@tanstack/react-table) best practices with TypeScript, performance optimization, virtualization, and advanced table features following expert community standards</description>
+    <created-at utc-timestamp="1744330620">January 25, 2025, 2:37 PM</created-at>
+    <last-updated-at utc-timestamp="1744330620">January 25, 2025, 2:37 PM</last-updated-at>
+    <applies-to>
+      <file-matcher glob="**/*.{ts,tsx,js,jsx}">TypeScript and JavaScript table implementation files</file-matcher>
+      <file-matcher glob="**/package.json">Package dependency configuration</file-matcher>
+      <action-matcher action="table-implementation">Creating or modifying table components with TanStack Table</action-matcher>
+    </applies-to>
+  </meta>
+  <requirements>
+    <non-negotiable priority="critical">
+      <description>Use TanStack Table v8+ with proper TypeScript integration. Always provide stable references for data and columns using useMemo, useState, or external definitions to prevent infinite re-renders.</description>
+      <examples>
+        <example title="Stable References for Data and Columns">
+          <correct-example title="Proper memoization preventing infinite loops" conditions="Creating table with dynamic data" expected-result="Stable table rendering with proper performance" correctness-criteria="Uses useMemo for columns, stable references for data, proper TypeScript typing"><![CDATA[// Correct: Stable references with proper TypeScript
+import { 
+  useReactTable, 
+  getCoreRowModel, 
+  flexRender,
+  type ColumnDef 
+} from '@tanstack/react-table';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  age: number;
+}
+
+const UserTable: React.FC = () => {
+  // ✅ GOOD: Stable column reference with useMemo
+  const columns = useMemo<ColumnDef<User>[]>(() => [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      cell: ({ getValue }) => getValue<string>(),
+    },
+    {
+      accessorKey: 'email', 
+      header: 'Email',
+    },
+    {
+      accessorKey: 'age',
+      header: 'Age',
+      cell: ({ getValue }) => getValue<number>(),
+    }
+  ], []);
+
+  // ✅ GOOD: Stable data reference using state
+  const [data, setData] = useState<User[]>([]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <table>
+      <thead>
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <th key={header.id}>
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map(row => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map(cell => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};]]></correct-example>
+          <incorrect-example title="Unstable references causing infinite loops" conditions="Creating table with dynamic data" expected-result="Stable table rendering" incorrectness-criteria="Creates new column/data arrays on every render, causes infinite loops"><![CDATA[// ❌ BAD: Creates infinite re-render loops
+const UserTable: React.FC = () => {
+  // ❌ BAD: New columns array on every render
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+    },
+    // ...
+  ];
+
+  // ❌ BAD: Inline data transformation on every render
+  const data = userData.filter(user => user.isActive);
+
+  const table = useReactTable({
+    columns, // Unstable reference!
+    data,    // Unstable reference!
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return <table>...</table>;
+};]]></incorrect-example>
+        </example>
+      </examples>
+    </non-negotiable>
+    <non-negotiable priority="critical">
+      <description>Always use TypeScript generics properly with TanStack Table. Define data types and use ColumnDef<TData> for type safety. Use createColumnHelper for enhanced type inference and better developer experience.</description>
+      <examples>
+        <example title="TypeScript Integration and Type Safety">
+          <correct-example title="Proper TypeScript usage with createColumnHelper" conditions="Creating type-safe table columns" expected-result="Full type safety with proper IntelliSense" correctness-criteria="Uses generic types, createColumnHelper, proper cell value typing"><![CDATA[// Correct: Full TypeScript integration with createColumnHelper
+import { createColumnHelper, type ColumnDef } from '@tanstack/react-table';
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  inStock: boolean;
+  createdAt: Date;
+}
+
+const columnHelper = createColumnHelper<Product>();
+
+const columns = [
+  columnHelper.accessor('name', {
+    header: 'Product Name',
+    cell: info => info.getValue(), // ✅ Typed as string
+  }),
+  columnHelper.accessor('price', {
+    header: 'Price',
+    cell: info => `$${info.getValue().toFixed(2)}`, // ✅ Typed as number
+  }),
+  columnHelper.accessor(row => row.category, {
+    id: 'category',
+    header: 'Category',
+    cell: info => info.getValue(), // ✅ Typed properly
+  }),
+  columnHelper.display({
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => (
+      <button onClick={() => handleEdit(row.original.id)}>
+        Edit
+      </button>
+    ),
+  }),
+];
+
+const ProductTable: React.FC<{ data: Product[] }> = ({ data }) => {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <table>
+      {/* Render implementation */}
+    </table>
+  );
+};]]></correct-example>
+          <incorrect-example title="Poor TypeScript integration without type safety" conditions="Creating table columns" expected-result="Type-safe table implementation" incorrectness-criteria="No TypeScript generics, any types, no type inference"><![CDATA[// ❌ BAD: No TypeScript integration, any types
+const columns = [
+  {
+    accessorKey: 'name',
+    header: 'Product Name',
+    cell: (info: any) => info.getValue(), // ❌ No type safety
+  },
+  {
+    accessorKey: 'price',
+    header: 'Price',
+    cell: (info: any) => `$${info.getValue()}`, // ❌ Could break if not a number
+  }
+];
+
+const ProductTable = ({ data }: { data: any[] }) => { // ❌ any type
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return <table>...</table>;
+};]]></incorrect-example>
+        </example>
+      </examples>
+    </non-negotiable>
+    <requirement priority="critical">
+      <description>Implement proper performance optimization with memoization patterns. Memoize expensive calculations, use React.memo for table rows when dealing with large datasets, and implement virtualization for tables with 1000+ rows.</description>
+      <examples>
+        <example title="Performance Optimization Patterns">
+          <correct-example title="Optimized table with virtualization and memoization" conditions="Large dataset table (10k+ rows)" expected-result="Smooth performance with proper virtualization" correctness-criteria="Uses @tanstack/react-virtual, React.memo, proper memoization, stable references"><![CDATA[// Correct: Performance optimized table with virtualization
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useReactTable, flexRender, getCoreRowModel } from '@tanstack/react-table';
+
+interface DataRow {
+  id: string;
+  name: string;
+  value: number;
+}
+
+const VirtualizedTable: React.FC<{ data: DataRow[] }> = ({ data }) => {
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  
+  // ✅ Stable column reference
+  const columns = useMemo(() => [
+    columnHelper.accessor('name', {
+      header: 'Name',
+      size: 200,
+    }),
+    columnHelper.accessor('value', {
+      header: 'Value',
+      size: 100,
+      cell: info => info.getValue().toLocaleString(),
+    }),
+  ], []);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  const { rows } = table.getRowModel();
+
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 35,
+    overscan: 10,
+  });
+
+  return (
+    <div 
+      ref={tableContainerRef}
+      style={{ 
+        overflow: 'auto',
+        height: '600px' 
+      }}
+    >
+      <table style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
+        <thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th key={header.id} style={{ width: header.getSize() }}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {rowVirtualizer.getVirtualItems().map(virtualRow => {
+            const row = rows[virtualRow.index];
+            return (
+              <MemoizedTableRow 
+                key={row.id}
+                row={row}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              />
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// ✅ Memoized row component for performance
+const TableRow: React.FC<{ row: any; style: React.CSSProperties }> = ({ row, style }) => (
+  <tr style={style}>
+    {row.getVisibleCells().map((cell: any) => (
+      <td key={cell.id}>
+        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+      </td>
+    ))}
+  </tr>
+);
+
+const MemoizedTableRow = React.memo(TableRow);]]></correct-example>
+          <incorrect-example title="Poor performance without optimization" conditions="Large dataset table" expected-result="Optimized performance" incorrectness-criteria="No virtualization, no memoization, renders all rows, poor performance"><![CDATA[// ❌ BAD: No performance optimization, will be slow with large datasets
+const SlowTable: React.FC<{ data: DataRow[] }> = ({ data }) => {
+  // ❌ No memoization, new columns on every render
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+    },
+    {
+      accessorKey: 'value',
+      header: 'Value',
+      cell: (info: any) => info.getValue().toLocaleString(), // ❌ Expensive operation on every render
+    },
+  ];
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  // ❌ Renders ALL rows, will be slow with 10k+ items
+  return (
+    <table>
+      <thead>
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <th key={header.id}>
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map(row => ( // ❌ All rows rendered at once
+          <tr key={row.id}>
+            {row.getVisibleCells().map(cell => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};]]></incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+    <requirement priority="high">
+      <description>Implement comprehensive table features using TanStack Table's modular approach. Include sorting, filtering, pagination, row selection, and column management with proper state management and TypeScript support.</description>
+      <examples>
+        <example title="Full-Featured Table Implementation">
+          <correct-example title="Complete table with all major features" conditions="Building production-ready data table" expected-result="Full-featured table with proper state management" correctness-criteria="Includes sorting, filtering, pagination, selection, column visibility, proper TypeScript"><![CDATA[// Correct: Full-featured table implementation
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+  type ColumnDef,
+  type PaginationState,
+  type SortingState,
+  type ColumnFiltersState,
+  type VisibilityState,
+  type RowSelectionState,
+} from '@tanstack/react-table';
+
+interface Employee {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  department: string;
+  salary: number;
+  startDate: Date;
+}
+
+const EmployeeTable: React.FC<{ data: Employee[] }> = ({ data }) => {
+  // ✅ Proper state management for all table features
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const columns = useMemo<ColumnDef<Employee>[]>(() => [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <input
+          type="checkbox"
+          checked={table.getIsAllRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      ),
+      cell: ({ row }) => (
+        <input
+          type="checkbox"
+          checked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+        />
+      ),
+    },
+    columnHelper.accessor('firstName', {
+      header: 'First Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('lastName', {
+      header: 'Last Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('email', {
+      header: 'Email',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('department', {
+      header: 'Department',
+      filterFn: 'includesString',
+    }),
+    columnHelper.accessor('salary', {
+      header: 'Salary',
+      cell: info => new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(info.getValue()),
+      filterFn: 'inNumberRange',
+    }),
+    columnHelper.accessor('startDate', {
+      header: 'Start Date',
+      cell: info => info.getValue().toLocaleDateString(),
+    }),
+  ], []);
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+      pagination,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    manualPagination: false,
+    enableRowSelection: true,
+    enableColumnFilters: true,
+    enableSorting: true,
+  });
+
+  return (
+    <div>
+      {/* Column visibility controls */}
+      <div className="column-visibility">
+        {table.getAllLeafColumns().map(column => (
+          <label key={column.id}>
+            <input
+              type="checkbox"
+              checked={column.getIsVisible()}
+              onChange={column.getToggleVisibilityHandler()}
+            />
+            {column.id}
+          </label>
+        ))}
+      </div>
+
+      {/* Table */}
+      <table>
+        <thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th key={header.id}>
+                  {header.isPlaceholder ? null : (
+                    <div>
+                      <div
+                        className={header.column.getCanSort() ? 'cursor-pointer' : ''}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {{
+                          asc: ' 🔼',
+                          desc: ' 🔽',
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                      {header.column.getCanFilter() ? (
+                        <div>
+                          <Filter column={header.column} table={table} />
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Pagination controls */}
+      <div className="pagination">
+        <button
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<<'}
+        </button>
+        <button
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<'}
+        </button>
+        <span>
+          Page{' '}
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <button
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>'}
+        </button>
+        <button
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>>'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ✅ Reusable filter component
+const Filter: React.FC<{ column: any; table: any }> = ({ column }) => {
+  const firstValue = table
+    .getPreFilteredRowModel()
+    .flatRows[0]?.getValue(column.id);
+
+  const columnFilterValue = column.getFilterValue();
+
+  return typeof firstValue === 'number' ? (
+    <div>
+      <input
+        type="number"
+        value={(columnFilterValue as [number, number])?.[0] ?? ''}
+        onChange={e =>
+          column.setFilterValue((old: [number, number]) => [
+            e.target.value,
+            old?.[1],
+          ])
+        }
+        placeholder={`Min`}
+      />
+      <input
+        type="number"
+        value={(columnFilterValue as [number, number])?.[1] ?? ''}
+        onChange={e =>
+          column.setFilterValue((old: [number, number]) => [
+            old?.[0],
+            e.target.value,
+          ])
+        }
+        placeholder={`Max`}
+      />
+    </div>
+  ) : (
+    <input
+      type="text"
+      value={(columnFilterValue ?? '') as string}
+      onChange={e => column.setFilterValue(e.target.value)}
+      placeholder={`Search...`}
+    />
+  );
+};]]></correct-example>
+          <incorrect-example title="Basic table without essential features" conditions="Building production data table" expected-result="Full-featured table" incorrectness-criteria="No sorting, filtering, pagination, selection, or proper state management"><![CDATA[// ❌ BAD: Basic table without essential features
+const BasicTable: React.FC<{ data: Employee[] }> = ({ data }) => {
+  // ❌ No state management for table features
+  const columns = [
+    {
+      accessorKey: 'firstName',
+      header: 'First Name',
+    },
+    {
+      accessorKey: 'lastName', 
+      header: 'Last Name',
+    },
+    {
+      accessorKey: 'email',
+      header: 'Email',
+    },
+  ];
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    // ❌ Missing essential features: sorting, filtering, pagination
+  });
+
+  // ❌ Basic rendering without controls or features
+  return (
+    <table>
+      <thead>
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <th key={header.id}>
+                {flexRender(header.column.columnDef.header, header.getContext())}
+                {/* ❌ No sorting indicators or controls */}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map(row => ( // ❌ Shows all rows, no pagination
+          <tr key={row.id}>
+            {row.getVisibleCells().map(cell => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    // ❌ No pagination controls, filters, or column visibility
+  );
+};]]></incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+    <requirement priority="high">
+      <description>Implement proper data transformations and custom filtering logic. Use stable references for filtered data, implement custom filter functions for complex scenarios, and handle server-side operations with proper loading states.</description>
+      <examples>
+        <example title="Advanced Data Management">
+          <correct-example title="Server-side operations with custom filtering" conditions="Implementing server-side data fetching and custom filters" expected-result="Efficient data management with proper loading states" correctness-criteria="Stable data transformations, custom filter functions, loading states, error handling"><![CDATA[// Correct: Advanced data management with server-side operations
+import { useQuery } from '@tanstack/react-query';
+
+interface TableData {
+  id: string;
+  name: string;
+  status: 'active' | 'inactive' | 'pending';
+  priority: number;
+  tags: string[];
+}
+
+const AdvancedDataTable: React.FC = () => {
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  // ✅ Server-side data fetching with React Query
+  const { data: serverData, isLoading, error } = useQuery({
+    queryKey: ['tableData', pagination, sorting, columnFilters],
+    queryFn: ({ queryKey }) => fetchTableData(queryKey[1] as any),
+    keepPreviousData: true,
+  });
+
+  // ✅ Stable data reference with memoization
+  const data = useMemo(() => serverData?.data ?? [], [serverData?.data]);
+  const totalRowCount = serverData?.totalCount ?? 0;
+
+  // ✅ Custom filter functions
+  const customFilterFns = useMemo(() => ({
+    statusFilter: (row: any, columnId: string, value: string[]) => {
+      if (!value?.length) return true;
+      return value.includes(row.getValue(columnId));
+    },
+    priorityRange: (row: any, columnId: string, value: [number, number]) => {
+      const [min, max] = value;
+      const priority = row.getValue(columnId) as number;
+      return priority >= min && priority <= max;
+    },
+    tagsContain: (row: any, columnId: string, value: string) => {
+      const tags = row.getValue(columnId) as string[];
+      return tags.some(tag => tag.toLowerCase().includes(value.toLowerCase()));
+    },
+  }), []);
+
+  const columns = useMemo<ColumnDef<TableData>[]>(() => [
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: info => (
+        <span className={`status-${info.getValue()}`}>
+          {info.getValue().toUpperCase()}
+        </span>
+      ),
+      filterFn: 'statusFilter',
+    }),
+    columnHelper.accessor('priority', {
+      header: 'Priority',
+      cell: info => (
+        <div className="priority-indicator">
+          <span className={`priority-${info.getValue()}`}>
+            {info.getValue()}
+          </span>
+        </div>
+      ),
+      filterFn: 'priorityRange',
+    }),
+    columnHelper.accessor('tags', {
+      header: 'Tags',
+      cell: info => (
+        <div className="tags">
+          {info.getValue().map(tag => (
+            <span key={tag} className="tag">
+              {tag}
+            </span>
+          ))}
+        </div>
+      ),
+      filterFn: 'tagsContain',
+      enableSorting: false,
+    }),
+  ], []);
+
+  const table = useReactTable({
+    data,
+    columns,
+    pageCount: Math.ceil(totalRowCount / pagination.pageSize),
+    state: {
+      pagination,
+      sorting,
+      columnFilters,
+    },
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
+    filterFns: customFilterFns,
+  });
+
+  if (error) {
+    return <div>Error loading data: {error.message}</div>;
+  }
+
+  return (
+    <div>
+      {/* Advanced filters */}
+      <div className="table-controls">
+        <StatusFilter 
+          value={table.getColumn('status')?.getFilterValue() as string[] ?? []}
+          onChange={value => table.getColumn('status')?.setFilterValue(value)}
+        />
+        <PriorityRangeFilter
+          value={table.getColumn('priority')?.getFilterValue() as [number, number] ?? [1, 10]}
+          onChange={value => table.getColumn('priority')?.setFilterValue(value)}
+        />
+        <TagSearchFilter
+          value={table.getColumn('tags')?.getFilterValue() as string ?? ''}
+          onChange={value => table.getColumn('tags')?.setFilterValue(value)}
+        />
+      </div>
+
+      {/* Loading state */}
+      {isLoading && <div className="loading">Loading...</div>}
+
+      {/* Table */}
+      <table>
+        <thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th key={header.id}>
+                  {header.isPlaceholder ? null : (
+                    <div
+                      className={header.column.getCanSort() ? 'sortable' : ''}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getIsSorted() && (
+                        <span className="sort-indicator">
+                          {header.column.getIsSorted() === 'desc' ? ' ↓' : ' ↑'}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Server-side pagination */}
+      <div className="pagination">
+        <span>
+          Showing {table.getRowModel().rows.length} of {totalRowCount} results
+        </span>
+        <div className="pagination-controls">
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            First
+          </button>
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </button>
+          <span>
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </button>
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            Last
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ✅ Custom filter components
+const StatusFilter: React.FC<{
+  value: string[];
+  onChange: (value: string[]) => void;
+}> = ({ value, onChange }) => {
+  const statuses = ['active', 'inactive', 'pending'];
+  
+  return (
+    <div className="status-filter">
+      <label>Status:</label>
+      {statuses.map(status => (
+        <label key={status}>
+          <input
+            type="checkbox"
+            checked={value.includes(status)}
+            onChange={e => {
+              if (e.target.checked) {
+                onChange([...value, status]);
+              } else {
+                onChange(value.filter(v => v !== status));
+              }
+            }}
+          />
+          {status}
+        </label>
+      ))}
+    </div>
+  );
+};]]></correct-example>
+          <incorrect-example title="Poor data management without proper state handling" conditions="Implementing data fetching and filtering" expected-result="Proper data management with loading states" incorrectness-criteria="No loading states, direct data mutation, poor filtering, no error handling"><![CDATA[// ❌ BAD: Poor data management, no proper state handling
+const PoorDataTable: React.FC = () => {
+  const [data, setData] = useState<any[]>([]);
+
+  // ❌ No loading state, poor error handling
+  useEffect(() => {
+    fetch('/api/data')
+      .then(res => res.json())
+      .then(setData); // ❌ No error handling
+  }, []);
+
+  // ❌ Creates new columns on every render
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      cell: (info: any) => info.getValue(),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      // ❌ Inline filtering, no custom filter functions
+      cell: (info: any) => {
+        const status = info.getValue();
+        // ❌ Direct manipulation in render
+        if (status === 'active') {
+          return <span style={{ color: 'green' }}>ACTIVE</span>;
+        }
+        return status;
+      },
+    },
+  ];
+
+  const table = useReactTable({
+    data: data.filter((item: any) => item.isVisible), // ❌ Inline filtering destroys stable reference
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    // ❌ No pagination, sorting, or filtering setup
+  });
+
+  // ❌ No loading state, no error handling
+  return (
+    <table>
+      <thead>
+        {table.getHeaderGroups().map((headerGroup: any) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header: any) => (
+              <th key={header.id}>
+                {flexRender(header.column.columnDef.header, header.getContext())}
+                {/* ❌ No sorting controls */}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row: any) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell: any) => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    // ❌ No pagination controls, no filters
+  );
+};]]></incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+    <requirement priority="high">
+      <description>Follow proper testing patterns for TanStack Table components. Test table functionality, user interactions, data transformations, and performance characteristics. Use React Testing Library with proper queries and user event simulation.</description>
+      <examples>
+        <example title="Comprehensive Table Testing">
+          <correct-example title="Complete test suite for table functionality" conditions="Testing table component with all features" expected-result="Comprehensive test coverage for table behavior" correctness-criteria="Tests sorting, filtering, pagination, selection, user interactions, data loading"><![CDATA[// Correct: Comprehensive testing for TanStack Table
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AdvancedDataTable } from './AdvancedDataTable';
+
+// ✅ Mock data and API
+const mockData = [
+  { id: '1', name: 'John Doe', status: 'active', priority: 1, tags: ['urgent', 'bug'] },
+  { id: '2', name: 'Jane Smith', status: 'inactive', priority: 2, tags: ['feature'] },
+  { id: '3', name: 'Bob Johnson', status: 'pending', priority: 3, tags: ['enhancement'] },
+];
+
+const mockFetchTableData = jest.fn();
+
+jest.mock('./api', () => ({
+  fetchTableData: () => mockFetchTableData(),
+}));
+
+describe('AdvancedDataTable', () => {
+  let queryClient: QueryClient;
+  const user = userEvent.setup();
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    mockFetchTableData.mockResolvedValue({
+      data: mockData,
+      totalCount: mockData.length,
+    });
+  });
+
+  const renderTable = () => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <AdvancedDataTable />
+      </QueryClientProvider>
+    );
+  };
+
+  describe('Data Display', () => {
+    test('renders table with correct data', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+        expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+        expect(screen.getByText('Bob Johnson')).toBeInTheDocument();
+      });
+    });
+
+    test('displays loading state while fetching data', () => {
+      mockFetchTableData.mockImplementation(() => new Promise(() => {})); // Never resolves
+      renderTable();
+
+      expect(screen.getByText('Loading...')).toBeInTheDocument();
+    });
+
+    test('handles error state properly', async () => {
+      const errorMessage = 'Failed to fetch data';
+      mockFetchTableData.mockRejectedValue(new Error(errorMessage));
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText(`Error loading data: ${errorMessage}`)).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Sorting Functionality', () => {
+    test('sorts data when header is clicked', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const nameHeader = screen.getByText('Name');
+      await user.click(nameHeader);
+
+      // Verify sorting indicator appears
+      expect(nameHeader.closest('th')).toHaveTextContent('↑');
+      
+      // Click again for descending sort
+      await user.click(nameHeader);
+      expect(nameHeader.closest('th')).toHaveTextContent('↓');
+    });
+
+    test('maintains sort state across data refetches', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const nameHeader = screen.getByText('Name');
+      await user.click(nameHeader);
+
+      // Verify API is called with sorting parameters
+      await waitFor(() => {
+        expect(mockFetchTableData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            sorting: [{ id: 'name', desc: false }],
+          })
+        );
+      });
+    });
+  });
+
+  describe('Filtering Functionality', () => {
+    test('filters data using status filter', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Find and interact with status filter
+      const activeCheckbox = screen.getByLabelText('active');
+      await user.click(activeCheckbox);
+
+      await waitFor(() => {
+        expect(mockFetchTableData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            columnFilters: [{ id: 'status', value: ['active'] }],
+          })
+        );
+      });
+    });
+
+    test('filters using priority range', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const minPriorityInput = screen.getByLabelText(/min priority/i);
+      const maxPriorityInput = screen.getByLabelText(/max priority/i);
+
+      await user.clear(minPriorityInput);
+      await user.type(minPriorityInput, '2');
+      await user.clear(maxPriorityInput);
+      await user.type(maxPriorityInput, '5');
+
+      await waitFor(() => {
+        expect(mockFetchTableData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            columnFilters: [{ id: 'priority', value: [2, 5] }],
+          })
+        );
+      });
+    });
+
+    test('searches tags with text input', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const tagSearchInput = screen.getByPlaceholderText(/search tags/i);
+      await user.type(tagSearchInput, 'bug');
+
+      await waitFor(() => {
+        expect(mockFetchTableData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            columnFilters: [{ id: 'tags', value: 'bug' }],
+          })
+        );
+      });
+    });
+  });
+
+  describe('Pagination', () => {
+    test('navigates through pages correctly', async () => {
+      // Mock multiple pages of data
+      mockFetchTableData.mockResolvedValue({
+        data: mockData.slice(0, 2),
+        totalCount: 10,
+      });
+
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('Page 1 of 5')).toBeInTheDocument();
+      });
+
+      const nextButton = screen.getByText('Next');
+      await user.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockFetchTableData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            pagination: { pageIndex: 1, pageSize: 10 },
+          })
+        );
+      });
+    });
+
+    test('disables navigation buttons appropriately', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const firstButton = screen.getByText('First');
+      const previousButton = screen.getByText('Previous');
+
+      expect(firstButton).toBeDisabled();
+      expect(previousButton).toBeDisabled();
+    });
+  });
+
+  describe('Performance', () => {
+    test('renders large datasets efficiently', async () => {
+      const largeData = Array.from({ length: 1000 }, (_, i) => ({
+        id: i.toString(),
+        name: `User ${i}`,
+        status: 'active' as const,
+        priority: i % 10,
+        tags: [`tag${i}`],
+      }));
+
+      mockFetchTableData.mockResolvedValue({
+        data: largeData,
+        totalCount: largeData.length,
+      });
+
+      const startTime = performance.now();
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('User 0')).toBeInTheDocument();
+      });
+
+      const endTime = performance.now();
+      const renderTime = endTime - startTime;
+
+      // Ensure rendering completes within reasonable time
+      expect(renderTime).toBeLessThan(1000); // 1 second
+    });
+
+    test('maintains stable references to prevent unnecessary re-renders', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Trigger a state change that shouldn't cause data re-fetch
+      const nameHeader = screen.getByText('Name');
+      await user.click(nameHeader);
+
+      // Verify columns and other references remain stable
+      expect(consoleSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('Columns reference changed')
+      );
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('Accessibility', () => {
+    test('provides proper ARIA labels and roles', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByRole('table')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('table')).toHaveAttribute('aria-label', 'Data table');
+      
+      const sortableHeaders = screen.getAllByRole('columnheader');
+      sortableHeaders.forEach(header => {
+        if (header.textContent?.includes('↑') || header.textContent?.includes('↓')) {
+          expect(header).toHaveAttribute('aria-sort');
+        }
+      });
+    });
+
+    test('supports keyboard navigation', async () => {
+      renderTable();
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const nameHeader = screen.getByText('Name');
+      nameHeader.focus();
+      
+      await user.keyboard('{Enter}');
+      
+      // Verify sorting was triggered by keyboard
+      expect(nameHeader.closest('th')).toHaveTextContent('↑');
+    });
+  });
+});
+
+// ✅ Custom testing utilities for table interactions
+export const tableTestUtils = {
+  async sortByColumn(columnName: string, direction: 'asc' | 'desc' = 'asc') {
+    const header = screen.getByText(columnName);
+    await userEvent.click(header);
+    
+    if (direction === 'desc') {
+      await userEvent.click(header);
+    }
+    
+    return header;
+  },
+
+  async filterByText(filterInput: HTMLElement, value: string) {
+    await userEvent.clear(filterInput);
+    await userEvent.type(filterInput, value);
+  },
+
+  async selectRow(rowIndex: number) {
+    const checkboxes = screen.getAllByRole('checkbox');
+    await userEvent.click(checkboxes[rowIndex + 1]); // +1 to skip header checkbox
+  },
+
+  async navigateToPage(pageNumber: number) {
+    const pageButton = screen.getByText(pageNumber.toString());
+    await userEvent.click(pageButton);
+  },
+
+  expectTableData(expectedData: string[][]) {
+    expectedData.forEach(rowData => {
+      rowData.forEach(cellData => {
+        expect(screen.getByText(cellData)).toBeInTheDocument();
+      });
+    });
+  },
+};]]></correct-example>
+          <incorrect-example title="Poor testing without proper coverage" conditions="Testing table component" expected-result="Comprehensive test coverage" incorrectness-criteria="Basic tests only, no user interaction testing, poor assertions, no performance tests"><![CDATA[// ❌ BAD: Poor testing coverage, basic assertions only
+import { render, screen } from '@testing-library/react';
+import { DataTable } from './DataTable';
+
+describe('DataTable', () => {
+  const mockData = [
+    { id: 1, name: 'John', status: 'active' },
+    { id: 2, name: 'Jane', status: 'inactive' },
+  ];
+
+  test('renders table', () => {
+    render(<DataTable data={mockData} />);
+    
+    // ❌ Very basic assertion
+    expect(screen.getByText('John')).toBeInTheDocument();
+    expect(screen.getByText('Jane')).toBeInTheDocument();
+  });
+
+  test('has headers', () => {
+    render(<DataTable data={mockData} />);
+    
+    // ❌ Minimal header testing
+    expect(screen.getByText('Name')).toBeInTheDocument();
+    expect(screen.getByText('Status')).toBeInTheDocument();
+  });
+
+  // ❌ No sorting tests
+  // ❌ No filtering tests  
+  // ❌ No pagination tests
+  // ❌ No user interaction tests
+  // ❌ No performance tests
+  // ❌ No error handling tests
+  // ❌ No accessibility tests
+  // ❌ No loading state tests
+});]]></incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+    <requirement priority="medium">
+      <description>Implement proper accessibility features including ARIA labels, keyboard navigation, screen reader support, and semantic HTML structure. Ensure tables work with assistive technologies and follow WCAG guidelines.</description>
+      <examples>
+        <example title="Accessibility Implementation">
+          <correct-example title="Accessible table with full ARIA support" conditions="Building accessible data table" expected-result="Table fully accessible to screen readers and keyboard users" correctness-criteria="ARIA labels, keyboard navigation, semantic HTML, screen reader announcements, focus management"><![CDATA[// Correct: Fully accessible table implementation
+import { useId } from 'react';
+
+interface AccessibleTableProps<TData> {
+  data: TData[];
+  columns: ColumnDef<TData>[];
+  ariaLabel?: string;
+  caption?: string;
+}
+
+const AccessibleTable = <TData,>({ 
+  data, 
+  columns, 
+  ariaLabel = "Data table",
+  caption 
+}: AccessibleTableProps<TData>) => {
+  const tableId = useId();
+  const captionId = useId();
+  const [announcement, setAnnouncement] = useState<string>('');
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    // ✅ Accessibility-focused callbacks
+    onSortingChange: (updater) => {
+      setSorting(updater);
+      // Announce sort changes to screen readers
+      const newSorting = typeof updater === 'function' ? updater(sorting) : updater;
+      if (newSorting.length > 0) {
+        const { id, desc } = newSorting[0];
+        setAnnouncement(`Table sorted by ${id} in ${desc ? 'descending' : 'ascending'} order`);
+      }
+    },
+    onPaginationChange: (updater) => {
+      setPagination(updater);
+      const newPagination = typeof updater === 'function' ? updater(pagination) : updater;
+      setAnnouncement(`Navigated to page ${newPagination.pageIndex + 1} of ${table.getPageCount()}`);
+    },
+  });
+
+  // ✅ Live region for screen reader announcements
+  useEffect(() => {
+    if (announcement) {
+      const timer = setTimeout(() => setAnnouncement(''), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [announcement]);
+
+  // ✅ Keyboard navigation
+  const handleKeyDown = (event: React.KeyboardEvent, action: () => void) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      action();
+    }
+  };
+
+  return (
+    <div className="table-container">
+      {/* ✅ Live region for announcements */}
+      <div 
+        aria-live="polite" 
+        aria-atomic="true" 
+        className="sr-only"
+      >
+        {announcement}
+      </div>
+
+      {/* ✅ Table controls with proper labeling */}
+      <div className="table-controls" role="group" aria-labelledby={`${tableId}-controls`}>
+        <h3 id={`${tableId}-controls`} className="sr-only">Table Controls</h3>
+        
+        {/* Search with proper labeling */}
+        <div className="search-control">
+          <label htmlFor={`${tableId}-search`}>Search table:</label>
+          <input
+            id={`${tableId}-search`}
+            type="text"
+            value={globalFilter ?? ''}
+            onChange={e => setGlobalFilter(e.target.value)}
+            placeholder="Search all columns..."
+            aria-describedby={`${tableId}-search-desc`}
+          />
+          <div id={`${tableId}-search-desc`} className="sr-only">
+            Type to search across all table columns. Results will be filtered as you type.
+          </div>
+        </div>
+
+        {/* Page size selector */}
+        <div className="page-size-control">
+          <label htmlFor={`${tableId}-pagesize`}>Rows per page:</label>
+          <select
+            id={`${tableId}-pagesize`}
+            value={table.getState().pagination.pageSize}
+            onChange={e => table.setPageSize(Number(e.target.value))}
+          >
+            {[10, 20, 50, 100].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* ✅ Semantic table with proper ARIA attributes */}
+      <table 
+        id={tableId}
+        role="table"
+        aria-label={ariaLabel}
+        aria-describedby={caption ? captionId : undefined}
+        aria-rowcount={table.getRowCount()}
+        aria-colcount={table.getAllLeafColumns().length}
+      >
+        {caption && (
+          <caption id={captionId}>
+            {caption}
+          </caption>
+        )}
+        
+        <thead>
+          {table.getHeaderGroups().map((headerGroup, groupIndex) => (
+            <tr key={headerGroup.id} role="row" aria-rowindex={groupIndex + 1}>
+              {headerGroup.headers.map((header, colIndex) => (
+                <th
+                  key={header.id}
+                  role="columnheader"
+                  aria-colindex={colIndex + 1}
+                  aria-sort={
+                    header.column.getIsSorted() 
+                      ? header.column.getIsSorted() === 'desc' 
+                        ? 'descending' 
+                        : 'ascending'
+                      : header.column.getCanSort() 
+                        ? 'none' 
+                        : undefined
+                  }
+                  scope="col"
+                  className={header.column.getCanSort() ? 'sortable' : ''}
+                >
+                  {header.isPlaceholder ? null : (
+                    <div>
+                      {header.column.getCanSort() ? (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          onKeyDown={e => handleKeyDown(e, header.column.getToggleSortingHandler())}
+                          aria-label={`Sort by ${header.column.id} ${
+                            header.column.getIsSorted() === 'desc' 
+                              ? 'ascending' 
+                              : 'descending'
+                          }`}
+                          className="sort-button"
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <span aria-hidden="true" className="sort-icon">
+                            {header.column.getIsSorted() === 'desc' ? ' ↓' : 
+                             header.column.getIsSorted() === 'asc' ? ' ↑' : ' ↕'}
+                          </span>
+                        </button>
+                      ) : (
+                        flexRender(header.column.columnDef.header, header.getContext())
+                      )}
+                      
+                      {/* Column filter */}
+                      {header.column.getCanFilter() && (
+                        <div className="column-filter">
+                          <label htmlFor={`filter-${header.column.id}`} className="sr-only">
+                            Filter {header.column.id}
+                          </label>
+                          <input
+                            id={`filter-${header.column.id}`}
+                            type="text"
+                            value={(header.column.getFilterValue() ?? '') as string}
+                            onChange={e => header.column.setFilterValue(e.target.value)}
+                            placeholder={`Filter ${header.column.id}...`}
+                            aria-describedby={`filter-${header.column.id}-desc`}
+                          />
+                          <div id={`filter-${header.column.id}-desc`} className="sr-only">
+                            Filter rows by {header.column.id} column
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        
+        <tbody>
+          {table.getRowModel().rows.map((row, rowIndex) => (
+            <tr 
+              key={row.id} 
+              role="row" 
+              aria-rowindex={rowIndex + 2} // +2 for header row
+              className={row.getIsSelected() ? 'selected' : ''}
+            >
+              {row.getVisibleCells().map((cell, cellIndex) => (
+                <td
+                  key={cell.id}
+                  role="gridcell"
+                  aria-colindex={cellIndex + 1}
+                  aria-describedby={cell.column.getCanSort() ? `sort-${cell.column.id}` : undefined}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* ✅ Accessible pagination controls */}
+      <nav 
+        aria-label="Table pagination" 
+        className="pagination"
+        role="navigation"
+      >
+        <div className="pagination-info" aria-live="polite">
+          Showing {table.getRowModel().rows.length} of {table.getFilteredRowModel().rows.length} results
+          (page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()})
+        </div>
+        
+        <div className="pagination-controls" role="group" aria-label="Pagination controls">
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            aria-label="Go to first page"
+            title="First page"
+          >
+            <span aria-hidden="true">⟪</span>
+            <span className="sr-only">First</span>
+          </button>
+          
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            aria-label="Go to previous page"
+            title="Previous page"
+          >
+            <span aria-hidden="true">⟨</span>
+            <span className="sr-only">Previous</span>
+          </button>
+          
+          <span className="page-info" aria-current="page">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            aria-label="Go to next page"
+            title="Next page"
+          >
+            <span aria-hidden="true">⟩</span>
+            <span className="sr-only">Next</span>
+          </button>
+          
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            aria-label="Go to last page"
+            title="Last page"
+          >
+            <span aria-hidden="true">⟫</span>
+            <span className="sr-only">Last</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* ✅ Table summary for screen readers */}
+      <div className="sr-only" aria-live="polite">
+        Table contains {table.getRowCount()} rows and {table.getAllLeafColumns().length} columns.
+        {table.getState().sorting.length > 0 && 
+          ` Currently sorted by ${table.getState().sorting[0].id} in ${table.getState().sorting[0].desc ? 'descending' : 'ascending'} order.`
+        }
+        {table.getState().globalFilter && 
+          ` Filtered by search term: ${table.getState().globalFilter}.`
+        }
+      </div>
+    </div>
+  );
+};]]></correct-example>
+          <incorrect-example title="Inaccessible table without proper ARIA support" conditions="Building data table" expected-result="Accessible table" incorrectness-criteria="No ARIA labels, poor keyboard navigation, no screen reader support, missing semantic structure"><![CDATA[// ❌ BAD: Inaccessible table implementation
+const InaccessibleTable: React.FC<{ data: any[], columns: any[] }> = ({ data, columns }) => {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <div>
+      {/* ❌ No accessible controls */}
+      <input 
+        type="text" 
+        placeholder="Search..." 
+        // ❌ No label, no ARIA attributes
+      />
+      
+      {/* ❌ Generic div instead of semantic table */}
+      <div className="table">
+        <div className="header">
+          {table.getHeaderGroups().map(headerGroup => (
+            <div key={headerGroup.id} className="row">
+              {headerGroup.headers.map(header => (
+                <div 
+                  key={header.id} 
+                  className="cell"
+                  onClick={header.column.getToggleSortingHandler()} // ❌ No keyboard support
+                  // ❌ No ARIA sort attributes
+                  // ❌ No role attributes
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {/* ❌ No sort indicators for screen readers */}
+                  {header.column.getIsSorted() ? '↕' : ''}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        
+        <div className="body">
+          {table.getRowModel().rows.map(row => (
+            <div key={row.id} className="row">
+              {row.getVisibleCells().map(cell => (
+                <div 
+                  key={cell.id} 
+                  className="cell"
+                  // ❌ No role or ARIA attributes
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ❌ Inaccessible pagination */}
+      <div className="pagination">
+        <span onClick={() => table.previousPage()}>Previous</span> {/* ❌ No button, no keyboard support */}
+        <span onClick={() => table.nextPage()}>Next</span>
+        {/* ❌ No ARIA labels, no disabled state indication */}
+        {/* ❌ No page information for screen readers */}
+      </div>
+    </div>
+  );
+};]]></incorrect-example>
+        </example>
+      </examples>
+    </requirement>
+  </requirements>
+  <grammar>
+    <grammar-entry title="Package Installation">
+      <pattern description="TanStack Table core package installation">npm install @tanstack/react-table</pattern>
+      <pattern description="TanStack Virtual for virtualization">npm install @tanstack/react-virtual</pattern>
+      <pattern description="TypeScript types (included in package)">@tanstack/react-table includes TypeScript definitions</pattern>
+      <example description="Complete installation with virtualization">npm install @tanstack/react-table @tanstack/react-virtual</example>
+    </grammar-entry>
+    <grammar-entry title="Import Patterns">
+      <pattern description="Core imports">import { useReactTable, getCoreRowModel, flexRender, type ColumnDef } from '@tanstack/react-table'</pattern>
+      <pattern description="Feature imports">import { getFilteredRowModel, getSortedRowModel, getPaginationRowModel } from '@tanstack/react-table'</pattern>
+      <pattern description="TypeScript types">import type { Table, Row, Column, Cell, SortingState, ColumnFiltersState } from '@tanstack/react-table'</pattern>
+      <pattern description="Virtual imports">import { useVirtualizer } from '@tanstack/react-virtual'</pattern>
+      <example description="Complete import statement">import { useReactTable, getCoreRowModel, flexRender, createColumnHelper, type ColumnDef } from '@tanstack/react-table'</example>
+    </grammar-entry>
+    <grammar-entry title="Column Definition Patterns">
+      <pattern description="Accessor key column">columnHelper.accessor('propertyKey', { header: 'Header', cell: info => info.getValue() })</pattern>
+      <pattern description="Accessor function column">columnHelper.accessor(row => row.computed, { id: 'computed', header: 'Computed' })</pattern>
+      <pattern description="Display column">columnHelper.display({ id: 'actions', header: 'Actions', cell: ({ row }) => <Actions row={row} /> })</pattern>
+      <pattern description="TypeScript column definition">const columns = useMemo<ColumnDef<DataType>[]>(() => [...], [])</pattern>
+      <example description="Complete column definition">const columns = useMemo(() => [columnHelper.accessor('name', { header: 'Name' }), columnHelper.display({ id: 'actions', cell: ({ row }) => <button>Edit</button> })], [])</example>
+    </grammar-entry>
+    <grammar-entry title="Table Configuration Patterns">
+      <pattern description="Basic table setup">useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() })</pattern>
+      <pattern description="Full-featured table">useReactTable({ data, columns, state: { sorting, pagination }, onSortingChange: setSorting, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel() })</pattern>
+      <pattern description="Server-side table">useReactTable({ data, columns, pageCount, manualPagination: true, manualSorting: true, manualFiltering: true })</pattern>
+      <example description="Complete table configuration">useReactTable({ data, columns, state: { sorting, columnFilters, pagination }, onSortingChange: setSorting, onColumnFiltersChange: setColumnFilters, getCoreRowModel: getCoreRowModel(), getFilteredRowModel: getFilteredRowModel() })</example>
+    </grammar-entry>
+  </grammar>
+  <context description="TanStack Table usage considerations">
+    TanStack Table is a headless table library that provides powerful data manipulation and state management without prescribing any UI. The library excels at handling large datasets, complex filtering, sorting, and pagination requirements while maintaining excellent performance through features like virtualization.
+
+    Key performance considerations:
+    - Always provide stable references for data and columns using useMemo or useState
+    - Implement virtualization for tables with 1000+ rows using @tanstack/react-virtual
+    - Use React.memo for table row components when dealing with large datasets
+    - Memoize expensive cell rendering operations and custom filter functions
+    
+    TypeScript integration is crucial for maintaining type safety across the complex table state and ensuring proper IntelliSense support. The createColumnHelper utility provides enhanced type inference and should be preferred over manual column definitions.
+
+    Accessibility should be a primary concern when implementing tables, ensuring proper ARIA attributes, keyboard navigation, and screen reader support. Follow WCAG guidelines for data tables and provide meaningful labels and descriptions.
+
+    Testing should cover all interactive features including sorting, filtering, pagination, row selection, and data loading states. Use React Testing Library with proper user event simulation to test the complete user experience.
+  </context>
+  <references>
+    <reference as="dependency" href=".cursor/rules/000-core/002-cursor-rules-creation.mdc" reason="Follows standard rule format">Base rule format definition</reference>
+    <reference as="context" href="https://tanstack.com/table/v8/docs/guide/introduction" reason="Official TanStack Table documentation">TanStack Table official documentation</reference>
+    <reference as="context" href="https://tanstack.com/virtual/v3" reason="Virtualization library documentation">TanStack Virtual documentation</reference>
+    <reference as="examples" href="https://tanstack.com/table/v8/docs/examples/react/basic" reason="Official examples and patterns">TanStack Table React examples</reference>
+  </references>
+</rule>
